@@ -1,6 +1,9 @@
 import { AnimatedTitle } from '@/components/AnimatedTitle';
+import FallingCrosses from '@/components/FallingCrosses';
+import FloatingHalo from '@/components/FloatingHalo';
 import Div3D from '@/components/Text3D';
-import { useEnvironment } from '@/hooks/useEnvironment';
+import { TITLE } from '@/constants';
+import { useIsScreenLoader } from '@/hooks/useIsScreenLoader';
 import { useMousePosition } from '@/hooks/useMousePosition';
 import { useLanguage } from '@/providers/language.provider';
 import { useGSAP } from '@gsap/react';
@@ -11,45 +14,13 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useRef, useState } from 'react';
 
-const TITLE = {
-  FR: [
-    { text: 'Studio ', isBlue: false },
-    { text: 'créatif ', isBlue: false },
-    { text: 'qui ', isBlue: false },
-    { text: 'concoit ', isBlue: false },
-    { text: 'des ', isBlue: false },
-    { text: 'sites ', isBlue: true },
-    { text: 'web ', isBlue: true },
-    { text: 'uniques ', isBlue: false },
-    { text: 'et ', isBlue: false },
-    { text: 'immersifs ', isBlue: false },
-    { text: 'pour ', isBlue: false },
-    { text: 'les ', isBlue: false },
-    { text: 'entreprises ', isBlue: true },
-    { text: 'avant-', isBlue: true },
-    { text: 'gardistes.', isBlue: true },
-  ],
-  EN: [
-    { text: 'Creative ', isBlue: false },
-    { text: 'studio ', isBlue: false },
-    { text: 'crafting ', isBlue: false },
-    { text: 'unique ', isBlue: true },
-    { text: 'and ', isBlue: true },
-    { text: 'immersive ', isBlue: true },
-    { text: 'websites ', isBlue: false },
-    { text: 'for ', isBlue: false },
-    { text: 'forward-', isBlue: true },
-    { text: 'thinking ', isBlue: true },
-    { text: 'companies.', isBlue: true },
-  ],
-};
-
 export default function Home() {
   const { isFrench } = useLanguage();
-  const { isProd } = useEnvironment();
+  const isScreenLoader = useIsScreenLoader();
   const { x, y } = useMousePosition();
   const { asPath } = useRouter();
 
+  const haloRef = useRef(null);
   const textRef = useRef(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const createdByRef = useRef<HTMLHeadingElement>(null);
@@ -81,7 +52,7 @@ export default function Home() {
 
     gsap
       .timeline({
-        delay: 4.5,
+        delay: isScreenLoader ? 4.5 : 0.8,
         defaults: {
           ease: 'power2.out',
           duration: 0.8,
@@ -103,18 +74,35 @@ export default function Home() {
         },
         '-=0.8',
       )
+      .add(() => setIsAnimEnded(true))
       .set(createdByRef.current, {
         overflow: 'visible',
       })
-      .add(() => setIsAnimEnded(true));
-  }, [isProd, isFrench]);
+      .to(
+        haloRef.current,
+        {
+          x: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 4,
+          ease: 'power4.out',
+        },
+        '<',
+      );
+  }, [isScreenLoader, isFrench]);
 
   return (
     <>
+      <FloatingHalo
+        ref={haloRef}
+        className="!fixed top-[120%] -left-[90%] -z-30 h-[250vw] w-[250vw] -translate-x-full scale-50 opacity-0"
+        from="#1b17ee"
+        to="#f1f2ff00"
+      />
       <Head>
         <link key="canonical" href={'https://metabole.studio' + asPath} rel="canonical" />
       </Head>
-      <div className="fixed inset-0 flex h-screen w-screen flex-col">
+      <div className="inset-0 flex h-screen w-screen flex-col">
         <section
           ref={textRef}
           className="px-x-default flex h-full w-full flex-col justify-center text-left md:text-center"
@@ -134,7 +122,7 @@ export default function Home() {
                 Matteo Courquin
                 <span className="absolute bottom-8 left-1/2 h-auto w-56 origin-bottom -translate-x-1/2 scale-0 rotate-0 transition-transform duration-300 group-hover/photo:scale-100 group-hover/photo:-rotate-6">
                   <Image
-                    alt=""
+                    alt="Matteo Courquin"
                     className="animation-float h-full w-full object-contain"
                     height={1080}
                     src="/images/matteo.jpg"
@@ -151,7 +139,7 @@ export default function Home() {
                 Jérôme Bezeau
                 <span className="absolute bottom-8 left-1/2 h-auto w-56 origin-bottom -translate-x-1/2 scale-0 rotate-0 transition-transform duration-300 group-hover/photo:scale-100 group-hover/photo:rotate-6">
                   <Image
-                    alt=""
+                    alt="Jérôme Bezeau"
                     className="animation-float h-full w-full object-contain"
                     height={1080}
                     src="/images/jerome.jpg"
@@ -163,6 +151,7 @@ export default function Home() {
           </Div3D>
         </section>
       </div>
+      {isAnimEnded && <FallingCrosses className="fixed -z-10" />}
     </>
   );
 }

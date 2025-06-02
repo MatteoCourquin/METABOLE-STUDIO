@@ -1,30 +1,37 @@
+import { useIsScreenLoader } from '@/hooks/useIsScreenLoader';
 import { useLanguage } from '@/providers/language.provider';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import Link from 'next/link';
+import { useRef } from 'react';
 import metaboleFull from '../public/lotties/metabole-full-blue.json';
 import metaboleSmall from '../public/lotties/metabole-small-blue.json';
+import Button from './atoms/Button';
 import ContactPopover from './ContactPopover';
 import Lottie from './Lottie';
 import Sound from './Sound';
-import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
-import { useEnvironment } from '@/hooks/useEnvironment';
-import gsap from 'gsap';
 
-const Header = () => {
+const Header = ({
+  isContactOpen,
+  setIsContactOpen,
+}: {
+  isContactOpen: boolean;
+  setIsContactOpen: (isContactOpen: boolean) => void;
+}) => {
   const headerRef = useRef(null);
 
-  const { isProd } = useEnvironment();
+  const isScreenLoader = useIsScreenLoader();
   const { getInternalPath, isFrench } = useLanguage();
 
   useGSAP(() => {
     gsap.to(headerRef.current, {
-      delay: 4,
+      delay: isScreenLoader ? 4 : 0.4,
       duration: 2,
       ease: 'power4.out',
       y: 0,
       scale: 1,
     });
-  }, [isProd]);
+  }, [isScreenLoader]);
 
   return (
     <header
@@ -43,8 +50,11 @@ const Header = () => {
         </Link>
         <div className="relative flex h-[108px] gap-4 py-8">
           <Sound className="shrink-0" />
+          <Button className="hidden! md:inline-block!" href={getInternalPath('/pricing')}>
+            {isFrench ? 'Tarifs' : 'Pricing'}
+          </Button>
           <div className="relative w-[117px] md:w-auto">
-            <ContactPopover />
+            <ContactPopover isContactOpen={isContactOpen} setIsContactOpen={setIsContactOpen} />
           </div>
         </div>
       </div>

@@ -10,13 +10,19 @@ import { useGSAP } from '@gsap/react';
 import { useMutation } from '@tanstack/react-query';
 import gsap from 'gsap';
 import { useRef, useState } from 'react';
-import Button, { AnimatedButtonRef } from './Button';
+import Button, { AnimatedButtonRef } from './atoms/Button';
 import { IconCross } from './Icons';
 import Input, { AnimatedIputRef } from './Input';
 import Typography, { AnimatedTypoRef } from './Typography';
-import Checkbox from './Checkbox';
+import Checkbox from './atoms/Checkbox';
 
-const ContactPopover = () => {
+const ContactPopover = ({
+  isContactOpen,
+  setIsContactOpen,
+}: {
+  isContactOpen: boolean;
+  setIsContactOpen: (isContactOpen: boolean) => void;
+}) => {
   const buttonOpenRef = useRef(null);
   const buttonCloseRef = useRef(null);
   const containerRef = useRef<HTMLFormElement>(null);
@@ -30,7 +36,6 @@ const ContactPopover = () => {
   };
   const buttonSubmitRef = useRef<AnimatedButtonRef>(null);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -57,7 +62,7 @@ const ContactPopover = () => {
 
     const timeline = gsap.timeline();
     const mm = gsap.matchMedia();
-    timeline.add(() => setIsOpen(true));
+    timeline.add(() => setIsContactOpen(true));
 
     mm.add('(min-width: 768px)', () => {
       timeline
@@ -210,12 +215,12 @@ const ContactPopover = () => {
       )
       .add(() => {
         setFormStatus(FORM_STATUS.DEFAULT);
-        setIsOpen(false);
+        setIsContactOpen(false);
       });
   });
 
   const handleClickOutside = contextSafe(() => {
-    if (!isAnimating && isOpen) {
+    if (!isAnimating && isContactOpen) {
       closeAnim();
     }
   });
@@ -299,18 +304,26 @@ const ContactPopover = () => {
     return texts[formStatus] || texts.DEFAULT;
   };
 
+  useGSAP(() => {
+    if (isContactOpen) {
+      playAnim();
+    } else {
+      closeAnim();
+    }
+  }, [isContactOpen]);
+
   return (
     <div
       ref={wrapperRef}
-      className="border-red bg-blur-glass absolute right-0 h-11 w-[117px] max-w-[430px] overflow-hidden rounded-3xl text-black backdrop-blur-xl md:relative"
-      onClick={() => !isOpen && !isAnimating && playAnim()}
+      className="bg-blur-glass absolute right-0 h-11 w-[117px] max-w-[430px] overflow-hidden rounded-3xl text-black backdrop-blur-xl md:relative"
+      onClick={() => !isContactOpen && !isAnimating && playAnim()}
       onMouseMove={(e) => useMagnet(e, 0.8)}
       onMouseOut={(e) => useResetMagnet(e)}
     >
       <div
         ref={buttonOpenRef}
         className="flex h-11 cursor-pointer items-center justify-between px-6"
-        onMouseMove={(e) => !isOpen && useMagnet(e, 0.4)}
+        onMouseMove={(e) => !isContactOpen && useMagnet(e, 0.4)}
         onMouseOut={(e) => useResetMagnet(e)}
       >
         <button
@@ -421,6 +434,7 @@ const ContactPopover = () => {
           checked={formData.consentMarketing}
           className="-translate-y-5 opacity-0"
           id="consentMarketing"
+          isDisclaimer={true}
           name="consentMarketing"
           label={
             isFrench
