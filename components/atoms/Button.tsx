@@ -31,6 +31,7 @@ type DivButtonProps = BaseButtonProps &
 interface LinkButtonProps extends BaseButtonProps {
   href: string;
   target?: string;
+  scroll?: boolean;
 }
 
 type ButtonProps = DivButtonProps | LinkButtonProps;
@@ -77,7 +78,13 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
 
     const [currentChild, setCurrentChild] = useState(children);
 
+    // Animation de changement de contenu (seulement si le contenu change vraiment)
     useGSAP(() => {
+      // Ne pas animer au premier rendu
+      if (currentChild === children) {
+        return;
+      }
+
       const widthHiddenButton = hiddenButtonRef.current?.getBoundingClientRect();
 
       gsap
@@ -121,6 +128,7 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
       gsap.set(wrapperButtonRef.current, {
         width: 30,
         scale: 0,
+        display: 'none',
       });
       gsap.set(buttonRef.current, {
         opacity: 0,
@@ -152,7 +160,7 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
           {
             opacity: 1,
             duration: 0.3,
-            ease: 'power.out',
+            ease: 'power2.out',
           },
           '-=0.3',
         )
@@ -251,7 +259,7 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
             color === 'secondary' && 'bg-blue text-white',
             color === 'tertiary' && 'bg-yellow text-black',
             `origin-${transformOrigin}`,
-            disabled ? 'pointer-events-none cursor-not-allowed opacity-70' : 'cursor-pointer',
+            disabled ? 'cursor-default! opacity-70' : 'cursor-pointer',
             className,
           )}
           {...props}
@@ -260,8 +268,8 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
           target={target}
           onMouseEnter={showBackground}
           onMouseLeave={hideBackground}
-          onMouseMove={(e) => !disabled && useMagnet(e, 0.8)}
-          onMouseOut={(e) => !disabled && useResetMagnet(e)}
+          onMouseMove={(e) => useMagnet(e, 0.8)}
+          onMouseOut={(e) => useResetMagnet(e)}
         >
           <div
             ref={backgroudButtonRef}
@@ -271,9 +279,10 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
             )}
           />
           <div
+            ref={buttonRef}
             className="h-full w-full"
-            onMouseMove={(e) => !disabled && useMagnet(e, 0.4)}
-            onMouseOut={(e) => !disabled && useResetMagnet(e)}
+            onMouseMove={(e) => useMagnet(e, 0.4)}
+            onMouseOut={(e) => useResetMagnet(e)}
           >
             <div
               ref={textRef}
@@ -285,7 +294,7 @@ const Button = forwardRef<AnimatedButtonRef, ButtonProps>(
         </DynamicElement>
         <div
           ref={hiddenButtonRef}
-          className="label pointer-events-none invisible fixed top-0 left-0 -z-10 h-full w-fit items-center justify-center px-6 whitespace-nowrap opacity-0"
+          className="label pointer-events-none invisible fixed top-0 left-0 -z-10 h-full w-fit items-center justify-center px-6 whitespace-nowrap uppercase opacity-0"
         >
           {children}
         </div>

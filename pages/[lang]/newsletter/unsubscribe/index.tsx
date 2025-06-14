@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/atoms/Button';
 import { IconArrow } from '@/components/Icons';
 import Input from '@/components/Input';
 import Typography from '@/components/Typography';
@@ -98,7 +98,7 @@ const UnsubscribePage: NextPageWithLayout = () => {
             errorMessage={error}
             isLoading={isLoading}
             name="email"
-            placeholder="johndoe@company.com"
+            placeholder="john@company.com"
             successMessage={success}
             type="email"
             value={email}
@@ -132,6 +132,7 @@ const UnsubscribePage: NextPageWithLayout = () => {
         <Link
           className="flex cursor-pointer items-center gap-3 text-white"
           href={getInternalPath('/')}
+          scroll={false}
         >
           <IconArrow className="rotate-45" color={COLORS.WHITE} />
           {isFrench ? "Retour à l'accueil" : 'Back to home'}

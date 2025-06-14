@@ -32,3 +32,33 @@ html {
   rotate: none !important;
   scale: none !important;
 }
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.border-gradient-white-to-b {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-gradient-white-to-b::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(
+    to bottom,
+    #1B17EE59,
+    #1b17ee02,
+  );
+  border-radius: inherit; /* hérite du border-radius parent */
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}

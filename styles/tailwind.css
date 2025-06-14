@@ -2,6 +2,8 @@
 
 :root {
   /* SPACINGS */
+  --x-double-default: clamp(40px, 16vw, 200px);
+  --y-double-default: clamp(40px, 16vh, 200px);
   --x-default: clamp(20px, 8vw, 100px);
   --y-default: clamp(20px, 8vh, 100px);
   --x-half-default: calc(var(--x-default) / 2);
@@ -19,9 +21,10 @@
 }
 
 @theme {
+  /* COLORS (debug color) */
+  --color-red: #ff0000;
+  --color-green: #00ff00;
   /* COLORS (primary) */
-  --color-red: #ff0000; /* DEBUG COLOR */
-  --color-green: #00ff00; /* DEBUG COLOR */
   --color-blue: #1b17ee;
   --color-white: #f1f2ff;
   --color-black: #141418;
@@ -29,6 +32,7 @@
   /* COLORS (secondary) */
   --color-blue-70: #1b17eeb3;
   --color-blue-30: #1b17ee59;
+  --color-blue-10: #1b17ee1a;
   --color-white-70: #f1f2ffb3;
   --color-white-30: #f1f2ff59;
   --color-black-70: #141418b3;
@@ -37,6 +41,8 @@
   --color-yellow-30: #caee1759;
   /* COLORS (tertiary) */
   --color-blur-glass: #c5c4ff4d;
+  --color-menu: #e3e3ff;
+  --color-menu-00: #e3e3ff00;
 
   /* FONTS */
   --font-safiro-bold: var(--font-safiro-bold);
@@ -49,6 +55,8 @@
   --font-safiro-semibold-italic: var(--font-safiro-semibold-italic);
 
   /* PADDING */
+  --padding-x-double-default: var(--x-double-default);
+  --padding-y-double-default: var(--y-double-default);
   --padding-x-default: var(--x-default);
   --padding-y-default: var(--y-default);
   --padding-x-half-default: var(--x-half-default);
@@ -86,6 +94,32 @@
 
   /* BREAKPOINTS */
   --breakpoint-xs: 380px;
+
+  /* EASING */
+  /* Power1 */
+  --ease-power1-in: cubic-bezier(0.48, 0.04, 0.52, 0.99);
+  --ease-power1-out: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --ease-power1-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+
+  /* Power2 */
+  --ease-power2-in: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-power2-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-power2-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  /* Power3 */
+  --ease-power3-in: cubic-bezier(0.61, 0, 0.98, 0.57);
+  --ease-power3-out: cubic-bezier(0.06, 0.72, 0.23, 1);
+  --ease-power3-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Power4 */
+  --ease-power4-in: cubic-bezier(0.7, 0, 0.3, 0);
+  --ease-power4-out: cubic-bezier(0.3, 1, 0.7, 1);
+  --ease-power4-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+
+  /* Bounce (approximation) */
+  --ease-bounce-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce-in: cubic-bezier(0.76, 0, 0.24, -0.56);
+  --ease-bounce-in-out: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* SAFELIST */
